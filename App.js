@@ -1,29 +1,11 @@
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-
-// export default function App() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Open up App.js to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CardapioScreen from './src/screens/CardapioScreen';
+import CarrinhoScreen from './src/screens/CarrinhoScreen';
 
 export default function App() {
   const [carrinho, setCarrinho] = useState([]);
+  const [telaAtual, setTelaAtual] = useState('cardapio'); // 'cardapio' | 'carrinho'
 
   function adicionarAoCarrinho(produto) {
     setCarrinho((atual) => {
@@ -37,11 +19,40 @@ export default function App() {
     });
   }
 
+  function aumentarQuantidade(id) {
+    setCarrinho((atual) =>
+      atual.map((item) => (item.id === id ? { ...item, quantidade: item.quantidade + 1 } : item))
+    );
+  }
+
+  function diminuirQuantidade(id) {
+    setCarrinho((atual) =>
+      atual
+        .map((item) => (item.id === id ? { ...item, quantidade: item.quantidade - 1 } : item))
+        .filter((item) => item.quantidade > 0) // RF07: remove ao chegar em 0
+    );
+  }
+
   const totalItens = carrinho.reduce((soma, item) => soma + item.quantidade, 0);
 
   return (
     <SafeAreaProvider>
-      <CardapioScreen totalItens={totalItens} onAdicionar={adicionarAoCarrinho} />
+      {telaAtual === 'cardapio' && (
+        <CardapioScreen
+          totalItens={totalItens}
+          onAdicionar={adicionarAoCarrinho}
+          onAbrirCarrinho={() => setTelaAtual('carrinho')}
+        />
+      )}
+      {telaAtual === 'carrinho' && (
+        <CarrinhoScreen
+          carrinho={carrinho}
+          onAumentar={aumentarQuantidade}
+          onDiminuir={diminuirQuantidade}
+          onContinuar={() => console.log('vai pro checkout na Aula 3')}
+          onVoltar={() => setTelaAtual('cardapio')}
+        />
+      )}
     </SafeAreaProvider>
   );
 }

@@ -1,17 +1,15 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';import { SafeAreaView } from 'react-native-safe-area-context';
 import ProductCard from '../components/ProductCard';
 import { produtos } from '../data/Produtos';
 import { cores } from '../styles/cores';
 
-export default function CardapioScreen({ totalItens, onAdicionar }) {
-  return (
+export default function CardapioScreen({ totalItens, onAdicionar, onAbrirCarrinho }) {  return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.titulo}>DelivExpress</Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeTexto}>{totalItens}</Text>
-        </View>
+       <TouchableOpacity style={styles.badge} onPress={onAbrirCarrinho}>
+  <Text style={styles.badgeTexto}>{totalItens}</Text>
+</TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.lista}>
         {produtos.map((produto) => (

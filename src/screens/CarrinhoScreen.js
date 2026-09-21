@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cores } from '../styles/cores';
 
@@ -9,9 +10,13 @@ function formatarPreco(valor) {
 }
 
 export default function CarrinhoScreen({ carrinho, onAumentar, onDiminuir, onContinuar, onVoltar }) {
+  const [cupom, setCupom] = useState('');
+
   const subtotal = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
-  const total = carrinho.length > 0 ? subtotal + TAXA_ENTREGA : 0;
+  const cupomValido = cupom.trim().toUpperCase() === 'ALUNO10';
+  const desconto = cupomValido ? subtotal * 0.1 : 0;
   const carrinhoVazio = carrinho.length === 0;
+  const total = carrinhoVazio ? 0 : subtotal - desconto + TAXA_ENTREGA;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,6 +52,23 @@ export default function CarrinhoScreen({ carrinho, onAumentar, onDiminuir, onCon
             </Text>
           </View>
         ))}
+
+        {!carrinhoVazio && (
+          <View style={styles.cupomBox}>
+            <TextInput
+              style={styles.cupomInput}
+              placeholder="Cupom de desconto"
+              value={cupom}
+              onChangeText={setCupom}
+              autoCapitalize="characters"
+            />
+            {cupom.length > 0 && (
+              <Text style={cupomValido ? styles.cupomOk : styles.cupomErro}>
+                {cupomValido ? 'Cupom aplicado: -10%' : 'Cupom inválido'}
+              </Text>
+            )}
+          </View>
+        )}
       </ScrollView>
 
       <View style={styles.resumo}>
@@ -54,6 +76,12 @@ export default function CarrinhoScreen({ carrinho, onAumentar, onDiminuir, onCon
           <Text style={styles.labelResumo}>Subtotal</Text>
           <Text style={styles.valorResumo}>{formatarPreco(subtotal)}</Text>
         </View>
+        {cupomValido && (
+          <View style={styles.linhaResumo}>
+            <Text style={styles.labelResumo}>Desconto (ALUNO10)</Text>
+            <Text style={styles.valorDesconto}>-{formatarPreco(desconto)}</Text>
+          </View>
+        )}
         <View style={styles.linhaResumo}>
           <Text style={styles.labelResumo}>Entrega</Text>
           <Text style={styles.valorResumo}>{formatarPreco(carrinhoVazio ? 0 : TAXA_ENTREGA)}</Text>
@@ -120,6 +148,18 @@ const styles = StyleSheet.create({
   botaoQtdTexto: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
   quantidadeTexto: { fontSize: 16, marginHorizontal: 10, color: cores.textoForte },
   itemTotal: { fontSize: 15, fontWeight: 'bold', color: cores.textoForte, minWidth: 70, textAlign: 'right' },
+  cupomBox: { marginTop: 8, marginBottom: 4 },
+  cupomInput: {
+    borderWidth: 1,
+    borderColor: '#D0D5DD',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    minHeight: 44,
+  },
+  cupomOk: { color: cores.sucesso, fontSize: 13, marginTop: 4 },
+  cupomErro: { color: cores.erro, fontSize: 13, marginTop: 4 },
   resumo: {
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
@@ -128,6 +168,7 @@ const styles = StyleSheet.create({
   linhaResumo: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   labelResumo: { fontSize: 14, color: cores.textoSecundario },
   valorResumo: { fontSize: 14, color: cores.textoForte },
+  valorDesconto: { fontSize: 14, color: cores.sucesso, fontWeight: 'bold' },
   labelTotal: { fontSize: 16, fontWeight: 'bold', color: cores.textoForte },
   valorTotal: { fontSize: 16, fontWeight: 'bold', color: cores.primaria },
   botaoContinuar: {

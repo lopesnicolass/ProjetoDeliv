@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CardapioScreen from './src/screens/CardapioScreen';
 import CarrinhoScreen from './src/screens/CarrinhoScreen';
+import EntregaScreen from './src/screens/EntregaScreen';
 
 export default function App() {
   const [carrinho, setCarrinho] = useState([]);
-  const [telaAtual, setTelaAtual] = useState('cardapio'); // 'cardapio' | 'carrinho'
+  const [telaAtual, setTelaAtual] = useState('cardapio'); // 'cardapio' | 'carrinho' | 'checkout'
+  const [dadosEntrega, setDadosEntrega] = useState(null);
 
   function adicionarAoCarrinho(produto) {
     setCarrinho((atual) => {
@@ -33,6 +35,12 @@ export default function App() {
     );
   }
 
+  function finalizarPedido(dados) {
+    setDadosEntrega(dados);
+    // A tela de Confirmação (T4) entra na Aula 4 — por enquanto só guardamos os dados.
+    console.log('Dados de entrega:', dados);
+  }
+
   const totalItens = carrinho.reduce((soma, item) => soma + item.quantidade, 0);
 
   return (
@@ -49,8 +57,14 @@ export default function App() {
           carrinho={carrinho}
           onAumentar={aumentarQuantidade}
           onDiminuir={diminuirQuantidade}
-          onContinuar={() => console.log('vai pro checkout na Aula 3')}
+          onContinuar={() => setTelaAtual('checkout')}
           onVoltar={() => setTelaAtual('cardapio')}
+        />
+      )}
+      {telaAtual === 'checkout' && (
+        <EntregaScreen
+          onVoltar={() => setTelaAtual('carrinho')}
+          onFinalizarPedido={finalizarPedido}
         />
       )}
     </SafeAreaProvider>

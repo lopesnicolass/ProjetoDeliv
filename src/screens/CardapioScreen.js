@@ -13,11 +13,7 @@ import ProductCard from '../components/ProductCard';
 import { produtos } from '../data/Produtos';
 import { cores } from '../styles/cores';
 
-export default function CardapioScreen({
-  totalItens,
-  onAdicionar,
-  onAbrirCarrinho,
-}) {
+export default function CardapioScreen({ totalItens, onAdicionar, onAbrirCarrinho }) {
   const [busca, setBusca] = useState('');
 
   const produtosFiltrados = produtos.filter((produto) =>
@@ -29,21 +25,19 @@ export default function CardapioScreen({
       <View style={styles.header}>
         <Text style={styles.titulo}>DelivExpress</Text>
 
-        <TouchableOpacity
-          style={styles.badge}
-          onPress={onAbrirCarrinho}
-        >
-          <Text style={styles.badgeTexto}>{totalItens}</Text>
+        <TouchableOpacity style={styles.botaoCarrinho} onPress={onAbrirCarrinho}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeTexto}>{totalItens}</Text>
+          </View>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buscaContainer}>
         <Text style={styles.iconeBusca}>⌕</Text>
-
         <TextInput
           style={styles.campoBusca}
           placeholder="Buscar lanche"
-          placeholderTextColor="#9A9A9A"
+          placeholderTextColor={cores.placeholder}
           value={busca}
           onChangeText={setBusca}
         />
@@ -51,17 +45,11 @@ export default function CardapioScreen({
 
       <ScrollView contentContainerStyle={styles.lista}>
         {produtosFiltrados.map((produto) => (
-          <ProductCard
-            key={produto.id}
-            produto={produto}
-            onAdicionar={onAdicionar}
-          />
+          <ProductCard key={produto.id} produto={produto} onAdicionar={onAdicionar} />
         ))}
 
         {produtosFiltrados.length === 0 && (
-          <Text style={styles.semResultados}>
-            Nenhum lanche encontrado.
-          </Text>
+          <Text style={styles.semResultados}>Nenhum lanche encontrado.</Text>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -69,10 +57,7 @@ export default function CardapioScreen({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: cores.branco },
 
   header: {
     flexDirection: 'row',
@@ -80,70 +65,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: cores.primaria,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
+  titulo: { fontSize: 20, fontWeight: 'bold', color: cores.branco },
 
-  titulo: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+  botaoCarrinho: {
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-
   badge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    minWidth: 28,
+    height: 28,
+    borderRadius: 14,
+    paddingHorizontal: 6,
     backgroundColor: cores.sucesso,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
-  badgeTexto: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
+  badgeTexto: { color: cores.branco, fontSize: 14, fontWeight: 'bold' },
 
   buscaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 12,
-    marginTop: 10,
+    marginHorizontal: 16,
+    marginTop: 12,
     marginBottom: 4,
-    height: 36,
+    minHeight: 44,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: cores.borda,
     borderRadius: 8,
-    backgroundColor: '#fff',
-    paddingHorizontal: 8,
+    backgroundColor: cores.branco,
+    paddingHorizontal: 12,
   },
-
   iconeBusca: {
-    width: 20,
-    height: 20,
-    fontSize: 18,
-    lineHeight: 20,
-    textAlign: 'center',
-    color: '#8A8A8A',
-    marginRight: 5,
+    fontSize: 20,
+    color: cores.iconeBusca,
+    marginRight: 8,
   },
-
   campoBusca: {
     flex: 1,
-    height: 36,
-    fontSize: 12,
+    minHeight: 44,
+    fontSize: 14,
     paddingVertical: 0,
-    color: '#202A44',
+    color: cores.textoForte,
   },
 
-  lista: {
-    padding: 12,
-  },
+  lista: { padding: 16 },
 
   semResultados: {
     textAlign: 'center',
     marginTop: 20,
     fontSize: 14,
-    color: '#666',
+    color: cores.textoSecundario,
   },
 });

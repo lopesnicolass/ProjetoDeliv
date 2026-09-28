@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, View, StyleSheet } from 'react-native';
+import { Alert, Platform, View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CardapioScreen from './src/screens/CardapioScreen';
 import CarrinhoScreen from './src/screens/CarrinhoScreen';
@@ -41,9 +41,11 @@ export default function App() {
   }
 
   function finalizarPedido(dados) {
+    const numero = Math.floor(1000 + Math.random() * 9000); // RF17
     setDadosEntrega(dados);
-    setNumeroPedido(Math.floor(1000 + Math.random() * 9000));
+    setNumeroPedido(numero);
     setTelaAtual('confirmacao');
+    Alert.alert('Pedido confirmado!', `Seu pedido #${numero} foi realizado com sucesso.`);
   }
 
   function novoPedido() {
@@ -51,7 +53,7 @@ export default function App() {
     setCupom('');
     setDadosEntrega(null);
     setNumeroPedido(null);
-    setTelaAtual('cardapio');
+    setTelaAtual('cardapio'); // RF18
   }
 
   const totalItens = carrinho.reduce((soma, item) => soma + item.quantidade, 0);

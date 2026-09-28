@@ -25,6 +25,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
   const [trocoPara, setTrocoPara] = useState('');
   const [erros, setErros] = useState({});
 
+  // RNF08: só aceitam caracteres válidos
   function tratarTelefone(texto) {
     setTelefone(texto.replace(/[^0-9]/g, '').slice(0, 11));
   }
@@ -41,6 +42,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
     setTrocoPara(texto.replace(/[^0-9.,]/g, ''));
   }
 
+  // Seção 4: valida um campo por vez e para no primeiro erro
   function validarPedido() {
     if (totalItens === 0) {
       return setErros({ carrinho: 'Seu carrinho está vazio.' });
@@ -86,7 +88,11 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={onVoltar} style={styles.botaoVoltar}>
+        <TouchableOpacity
+          onPress={onVoltar}
+          style={styles.botaoVoltar}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Text style={styles.setaVoltar}>←</Text>
         </TouchableOpacity>
         <Text style={styles.titulo}>Dados de Entrega</Text>
@@ -99,8 +105,10 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={estiloInput('nome')}
           placeholder="Seu nome completo"
+          placeholderTextColor={cores.placeholder}
           value={nome}
           onChangeText={setNome}
+          keyboardType="default"
         />
         {erros.nome && <Text style={styles.textoErro}>{erros.nome}</Text>}
 
@@ -108,6 +116,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={estiloInput('telefone')}
           placeholder="11912345678"
+          placeholderTextColor={cores.placeholder}
           value={telefone}
           onChangeText={tratarTelefone}
           keyboardType="phone-pad"
@@ -119,6 +128,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={estiloInput('cep')}
           placeholder="00000000"
+          placeholderTextColor={cores.placeholder}
           value={cep}
           onChangeText={tratarCep}
           keyboardType="numeric"
@@ -130,8 +140,10 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={estiloInput('endereco')}
           placeholder="Rua, avenida..."
+          placeholderTextColor={cores.placeholder}
           value={endereco}
           onChangeText={setEndereco}
+          keyboardType="default"
         />
         {erros.endereco && <Text style={styles.textoErro}>{erros.endereco}</Text>}
 
@@ -139,6 +151,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={estiloInput('numero')}
           placeholder="123"
+          placeholderTextColor={cores.placeholder}
           value={numero}
           onChangeText={tratarNumero}
           keyboardType="numeric"
@@ -149,16 +162,20 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
         <TextInput
           style={styles.input}
           placeholder="Apto, bloco..."
+          placeholderTextColor={cores.placeholder}
           value={complemento}
           onChangeText={setComplemento}
+          keyboardType="default"
         />
 
         <Text style={styles.label}>Referência</Text>
         <TextInput
           style={styles.input}
           placeholder="Perto de..."
+          placeholderTextColor={cores.placeholder}
           value={referencia}
           onChangeText={setReferencia}
+          keyboardType="default"
         />
 
         <Text style={styles.label}>Forma de pagamento</Text>
@@ -193,6 +210,7 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
                 <TextInput
                   style={styles.input}
                   placeholder="R$ 0,00"
+                  placeholderTextColor={cores.placeholder}
                   value={trocoPara}
                   onChangeText={tratarTroco}
                   keyboardType="numeric"
@@ -211,32 +229,34 @@ export default function EntregaScreen({ totalItens, onVoltar, onFinalizarPedido 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: cores.branco },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16 },
   botaoVoltar: { width: 44, height: 44, justifyContent: 'center', alignItems: 'center' },
   setaVoltar: { fontSize: 22, color: cores.textoForte },
   titulo: { fontSize: 20, fontWeight: 'bold', color: cores.textoForte, marginLeft: 4 },
+
   form: { paddingHorizontal: 16, paddingBottom: 32 },
   label: { fontSize: 14, color: cores.textoSecundario, marginTop: 12, marginBottom: 4 },
   input: {
     borderWidth: 1,
-    borderColor: '#D0D5DD',
+    borderColor: cores.borda,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
     color: cores.textoForte,
     minHeight: 44,
-    backgroundColor: '#fff',
+    backgroundColor: cores.branco,
   },
   inputErro: { borderColor: cores.erro },
-  textoErro: { color: cores.erro, fontSize: 13, marginTop: 4 },
+  textoErro: { color: cores.erro, fontSize: 14, marginTop: 4 },
+
   pickerBox: {
     borderWidth: 1,
-    borderColor: '#D0D5DD',
+    borderColor: cores.borda,
     borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: '#fff',
+    backgroundColor: cores.branco,
     justifyContent: 'center',
   },
   picker: {
@@ -246,12 +266,11 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: 'transparent',
   },
-  pickerItem: {
-    fontSize: 14,
-    color: cores.textoForte,
-  },
+  pickerItem: { fontSize: 14, color: cores.textoForte },
+
   trocoBox: { marginTop: 8 },
   trocoLinha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+
   botaoFinalizar: {
     backgroundColor: cores.primaria,
     borderRadius: 8,
@@ -261,5 +280,5 @@ const styles = StyleSheet.create({
     minHeight: 44,
     justifyContent: 'center',
   },
-  botaoFinalizarTexto: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  botaoFinalizarTexto: { color: cores.branco, fontSize: 16, fontWeight: 'bold' },
 });

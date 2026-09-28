@@ -4,7 +4,11 @@
   "main": "index.js",
   "dependencies": {
     "@react-native-picker/picker": "2.11.4",
+<<<<<<< HEAD
     "expo": "~57.0.25",
+=======
+    "expo": "~57.0.19",
+>>>>>>> e259d1621020b216d228ad209192a0745f237465
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
